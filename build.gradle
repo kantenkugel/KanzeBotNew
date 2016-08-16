@@ -1,0 +1,55 @@
+// Apply the java plugin to add support for Java
+apply plugin: 'java'
+apply plugin: 'idea'
+
+group = "com.kantenkugel"
+archivesBaseName = "KanzeBot"
+version = "0.1b"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+def apiDocPath = file("$buildDir/docs/apiDocs")
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+    // Use 'jcenter' for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+    compile 'net.dv8tion:JDA:2.2.1_355'
+    compile 'org.xeustechnologies:jcl-core:2.7'
+    compile 'commons-configuration:commons-configuration:1.10'
+    compile 'com.sparkjava:spark-core:2.5'
+    testCompile 'junit:junit:4.12'
+}
+
+task apiDocs(type: Javadoc) {
+    classpath = sourceSets.main.compileClasspath
+    source = sourceSets.main.allJava
+    destinationDir = apiDocPath
+    include 'com/kantenkugel/kanzebot/api/**'
+    include 'net/dv8tion/jda/**'
+}
+
+task apiJar(type: Jar) {
+    appendix = 'API'
+    from sourceSets.main.output
+    include 'com/kantenkugel/kanzebot/api/**'
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task apiDocJar(type: Jar) {
+    appendix = 'API'
+    classifier = 'javadoc'
+    from apiDocPath
+}
+
+apiDocJar.dependsOn(apiDocs)
