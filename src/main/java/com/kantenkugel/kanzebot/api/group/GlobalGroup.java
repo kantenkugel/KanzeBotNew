@@ -16,28 +16,23 @@
 
 package com.kantenkugel.kanzebot.api.group;
 
-import com.kantenkugel.kanzebot.api.RequireType;
-import net.dv8tion.jda.Permission;
+import net.dv8tion.jda.entities.Guild;
 import net.dv8tion.jda.entities.TextChannel;
 import net.dv8tion.jda.entities.User;
 
-import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-public class ManagedGroup implements Group {
+/**
+ * This Group is used for Global groups (like BotAdmin) and takes care of storing its members to disk automatically
+ */
+//TODO: actually do persistence stuff
+public class GlobalGroup implements Group {
     private final String name;
-    private final Permission[] perms;
-    private final RequireType type;
+    private final Set<String> members = new HashSet<>();
 
-    public ManagedGroup(String name, Permission p) {
+    public GlobalGroup(String name) {
         this.name = name;
-        this.perms = new Permission[]{p};
-        this.type = RequireType.AND;
-    }
-
-    public ManagedGroup(String name, RequireType type, Permission... perms) {
-        this.name = name;
-        this.type = type;
-        this.perms = perms;
     }
 
     @Override
@@ -51,12 +46,25 @@ public class ManagedGroup implements Group {
     }
 
     @Override
-    public boolean isMember(TextChannel channel, User user) {
-        if(channel == null)
-            return false;
-        if(type == RequireType.AND)
-            return channel.checkPermission(user, perms);
-        else
-            return Arrays.stream(perms).anyMatch(p -> channel.checkPermission(user, p));
+    public boolean isMember(Guild guild, User user) {
+        return members.contains(user.getId());
+    }
+
+    @Override
+    public void addUser(Guild guild, User user) {
+        members.add(user.getId());
+    }
+
+    @Override
+    public void removeUser(Guild guild, User user) {
+        members.remove(user.getId());
+    }
+
+    public void addUser(User user) {
+        addUser(null, user);
+    }
+
+    public void removeUser(User user) {
+        removeUser(null, user);
     }
 }

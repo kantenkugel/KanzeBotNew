@@ -16,7 +16,7 @@
 
 package com.kantenkugel.kanzebot.api.command;
 
-import com.kantenkugel.kanzebot.api.MessageUtil;
+import com.kantenkugel.kanzebot.api.util.MessageUtil;
 import net.dv8tion.jda.entities.Message;
 import net.dv8tion.jda.entities.PrivateChannel;
 import net.dv8tion.jda.entities.TextChannel;
@@ -26,6 +26,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This is a helper-class that helps at creating commands with sub-commands
+ */
 public abstract class CommandGroup implements Command {
     private Map<String, Pair<Command, ArgParser>> subCommands;
 

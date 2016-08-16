@@ -123,7 +123,8 @@ public interface Command {
     boolean handlePrivate(PrivateChannel channel, User author, Message fullMessage, String args, Object[] customArgs);
 
     /**
-     * Returns the custom {@link ArgParser} if one should be used. If no custom argument-parser is needed, this returns <i>null</i>
+     * Returns the custom {@link ArgParser} if one should be used. If no custom argument-parser is needed, this returns <i>null</i>.
+     * This method is only called once on init to reduce lag during runtime (building of the parser)
      *
      * @return
      *      The custom ArgParser or <i>null</i> if no argument-parser is needed

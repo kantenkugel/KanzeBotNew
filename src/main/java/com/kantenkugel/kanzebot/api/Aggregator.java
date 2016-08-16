@@ -14,30 +14,11 @@
  * limitations under the License.
  */
 
-package com.kantenkugel.kanzebot.api.group;
+package com.kantenkugel.kanzebot.api;
 
-import net.dv8tion.jda.entities.TextChannel;
-import net.dv8tion.jda.entities.User;
-
-public class UnManagedGroup implements Group {
-    private final String name;
-
-    public UnManagedGroup(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public boolean isManaged() {
-        return false;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public boolean isMember(TextChannel channel, User user) {
-        return false;
-    }
+/**
+ * Used in {@link com.kantenkugel.kanzebot.api.command.Requirement Requirements} to specify how multiple Groups/Permissions should be handled.
+ */
+public enum Aggregator {
+    AND, OR
 }

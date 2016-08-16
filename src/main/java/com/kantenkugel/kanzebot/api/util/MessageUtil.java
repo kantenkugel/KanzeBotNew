@@ -14,14 +14,29 @@
  * limitations under the License.
  */
 
-package com.kantenkugel.kanzebot.api;
+package com.kantenkugel.kanzebot.api.util;
 
 import net.dv8tion.jda.entities.MessageChannel;
 
+/**
+ * Contains a lot of important functions having to do with Messages
+ */
 public class MessageUtil {
     private MessageUtil(){}
 
+    /**
+     * Sends a message to given channel
+     * following the {@link net.dv8tion.jda.entities.Guild Guild's} escapeEveryone configuration (if not PM).
+     * This will send the message asynchronously and will not block until the message was sent.
+     *
+     * @param channel
+     *      The channel to send the message to
+     * @param message
+     *      The message to send
+     */
     public static void sendMessage(MessageChannel channel, String message) {
         //todo
     }
+
+    //TODO: Add a lot more
 }

@@ -29,6 +29,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * This class is used to create a custom {@link ArgParser} to be used in {@link Command Commands}
+ */
 public class ParserBuilder {
     private StringBuilder builder = new StringBuilder();
     private List<ParserToken> types = new LinkedList<>();
@@ -38,47 +41,111 @@ public class ParserBuilder {
     public ParserBuilder() {
     }
 
+    /**
+     * Adds a literal (string) to the parsed sequence.<br>
+     * This literal will not be returned as argument but is strongly recommended
+     * after any input with possible spaces like User, String
+     *
+     * @param literal
+     *      The literal to add
+     * @return
+     *      The ParserBuilder instance for chaining.
+     */
     public ParserBuilder addLiteral(String literal) {
         builder.append("\\s+").append(literal);
         return this;
     }
 
+    /**
+     * Adds a String to be parsed from the input.
+     * This will either add a object of type String or <i>null</i> (in case of optional) to the arguments
+     *
+     * @return
+     *      The ParserBuilder instance for chaining.
+     */
     public ParserBuilder addString() {
         builder.append("(?:\\s+(.*?))?");
         types.add(ParserToken.STRING);
         return this;
     }
 
+    /**
+     * Adds a String to be parsed from the input and then split on whitespaces.
+     * This will either add a String array or String[0] (in case of optional) to the arguments
+     *
+     * @return
+     *      The ParserBuilder instance for chaining.
+     */
     public ParserBuilder addSplitString() {
         builder.append("(?:\\s+(.*?))?");
         types.add(ParserToken.VAR_STRING);
         return this;
     }
 
+    /**
+     * Adds a Integer to be parsed from the input.
+     * This will either add a <i>int</i> value or <i>null</i> (in case of optional) to the arguments
+     *
+     * @return
+     *      The ParserBuilder instance for chaining.
+     */
     public ParserBuilder addInteger() {
         builder.append("(?:\\s+([+-]?\\d+))?");
         types.add(ParserToken.INTEGER);
         return this;
     }
 
+    /**
+     * Adds a Float to be parsed from the input.
+     * This will either add a <i>float</i> value or <i>null</i> (in case of optional) to the arguments
+     *
+     * @return
+     *      The ParserBuilder instance for chaining.
+     */
     public ParserBuilder addFloat() {
         builder.append("(?:\\s+([+-]?\\d*\\.?\\d*))?");
         types.add(ParserToken.FLOAT);
         return this;
     }
 
+    /**
+     * Adds a {@link User} to be parsed from the input.
+     * This will either add a {@link User} object or <i>null</i> (in case of optional) to the arguments.<br><br>
+     *
+     * <b>Note:</b> this tries to first match a mention and if no mention is present a username.
+     * It is strongly recommended to use {@link #addLiteral(String)} if other arguments will be added to prevent some wrong matching due to spaces in usernames
+     *
+     * @return
+     *      The ParserBuilder instance for chaining.
+     */
     public ParserBuilder addUser() {
         builder.append("(?:\\s+(?:<@!?(\\d+)>|(.{3,32})))?");
         types.add(ParserToken.USER);
         return this;
     }
 
+    /**
+     * Adds a {@link Channel} to be parsed from the input.
+     * This will either add a {@link Channel} ({@link TextChannel} or {@link VoiceChannel}) object or <i>null</i> (in case of optional) to the arguments.<br><br>
+     *
+     * <b>Note:</b> this tries to first match a mention and if no mention is present a username.
+     *
+     * @return
+     *      The ParserBuilder instance for chaining.
+     */
     public ParserBuilder addChannel() {
-        builder.append("(?:\\s+(?:<#(\\d+)>|(.{3,32})))?");
+        builder.append("(?:\\s+(?:<#(\\d+)>|(\\S{3,32})))?");
         types.add(ParserToken.CHANNEL);
         return this;
     }
 
+    /**
+     * Signals the start of a optional block.
+     * Inputs that are not optional will automatically give the user a error if not specified.
+     *
+     * @return
+     *      The ParserBuilder instance for chaining.
+     */
     public ParserBuilder startOptionalBlock() {
         builder.append("(?:");
         types.add(ParserToken.OPTIONAL_START);
@@ -86,6 +153,13 @@ public class ParserBuilder {
         return this;
     }
 
+    /**
+     * Signals the end of a optional block.
+     * Inputs that are not optional will automatically give the user a error if not specified.
+     *
+     * @return
+     *      The ParserBuilder instance for chaining.
+     */
     public ParserBuilder endOptionalBlock() {
         if(optionalCount == 0) {
             throw new UnsupportedOperationException("Can't close a optional-block that was never opened!");
@@ -96,6 +170,12 @@ public class ParserBuilder {
         return this;
     }
 
+    /**
+     * Closes all still open optional-blocks and builds the ArgParser
+     *
+     * @return
+     *      The built ArgParser.
+     */
     public ArgParser build() {
         while(optionalCount > 0) {
             endOptionalBlock();
@@ -127,7 +207,37 @@ public class ParserBuilder {
         public ParserResult parseArgs(JDA jda, TextChannel optChannel, String args) {
             Matcher matcher = pattern.matcher(args);
             if(!matcher.matches()) {
-                return new ParserResult(null, "Incorrect usage");
+                StringBuilder reqArgs = new StringBuilder();
+                for(ParserToken type : types) {
+                    switch(type) {
+                        case STRING:
+                            reqArgs.append(" STRING");
+                            break;
+                        case INTEGER:
+                            reqArgs.append(" INTEGER");
+                            break;
+                        case FLOAT:
+                            reqArgs.append(" FLOAT");
+                            break;
+                        case USER:
+                            reqArgs.append(" USER(mention or name)");
+                            break;
+                        case CHANNEL:
+                            reqArgs.append(" CHANNEL(mention or name)");
+                            break;
+                        case OPTIONAL_START:
+                            reqArgs.append(" [");
+                            break;
+                        case OPTIONAL_END:
+                            reqArgs.append("]");
+                            break;
+                        case VAR_STRING:
+                            reqArgs.append(" STRING");
+                            break;
+                    }
+                }
+                reqArgs.delete(0, 0);
+                return new ParserResult(null, "Incorrect usage. Required Arguments: `" + reqArgs.toString() + "`");
             }
             int count = matcher.groupCount();
             List<Object> out = new LinkedList<>();

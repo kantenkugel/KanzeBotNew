@@ -16,7 +16,7 @@
 
 package com.kantenkugel.kanzebot.api.command;
 
-import com.kantenkugel.kanzebot.api.RequireType;
+import com.kantenkugel.kanzebot.api.Aggregator;
 import com.kantenkugel.kanzebot.api.group.Group;
 import net.dv8tion.jda.Permission;
 import net.dv8tion.jda.entities.TextChannel;
@@ -30,7 +30,7 @@ import java.util.Set;
  * Used to specify Group/Permission requirement of a Command
  */
 public class Requirement {
-    private final RequireType type;
+    private final Aggregator type;
     private final Set<Group> groupSet;
     private final Set<Permission> permSet;
 
@@ -55,7 +55,7 @@ public class Requirement {
      * @param permissions
      *      The permissions that should be checked for
      */
-    public Requirement(RequireType type, Permission... permissions) {
+    public Requirement(Aggregator type, Permission... permissions) {
         this.type = type;
         permSet = new HashSet<>(Arrays.asList(permissions));
         groupSet = null;
@@ -82,7 +82,7 @@ public class Requirement {
      * @param groups
      *      The groups that should be checked for
      */
-    public Requirement(RequireType type, Group... groups) {
+    public Requirement(Aggregator type, Group... groups) {
         this.type = type;
         groupSet = new HashSet<>(Arrays.asList(groups));
         permSet = null;
