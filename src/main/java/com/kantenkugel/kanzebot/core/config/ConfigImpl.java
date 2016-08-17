@@ -24,21 +24,12 @@ import org.apache.commons.configuration.event.ConfigurationEvent;
 import org.apache.commons.configuration.event.ConfigurationListener;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-/**
- * An implementation of the AddonConfig interface.
- * See the documentation of AddonConfig for more infos
- *
- * @author Kantenkugel
- * @see AddonConfig
- */
-public class AddonConfigImpl extends PropertiesConfiguration implements AddonConfig, ConfigurationListener {
+public class ConfigImpl extends PropertiesConfiguration implements AddonConfig, ConfigurationListener {
 
     private static Pattern versionPattern = Pattern.compile(".*\\#config.version\\=(\\d*)\\;.*");
 
@@ -49,7 +40,7 @@ public class AddonConfigImpl extends PropertiesConfiguration implements AddonCon
 
     private PropertiesConfigurationLayout layout;
 
-    public AddonConfigImpl(File file, String comment, int configVersion) throws ConfigurationException {
+    public ConfigImpl(File file, String comment, int configVersion) throws ConfigurationException {
         super(file);
         layout = getLayout();
         super.addConfigurationListener(this);
@@ -231,7 +222,7 @@ public class AddonConfigImpl extends PropertiesConfiguration implements AddonCon
         List<String> out = getList(key).parallelStream().map(String.class::cast).collect(Collectors.toList());
         if(out.isEmpty()) {
             out = defaultValue;
-            setProperty(key, out);
+            setProperty(key, out.isEmpty() ? "" : out);
         }
         if(comment != null) {
             layout.setComment(key, comment);
@@ -242,12 +233,37 @@ public class AddonConfigImpl extends PropertiesConfiguration implements AddonCon
 
     @Override
     public void setList(String key, List<String> value, String comment) {
-        set("L_" + key, value, comment);
+        set("L_" + key, value.isEmpty() ? "" : value, comment);
     }
 
     @Override
     public void deleteList(String key) {
         clearProperty("L_" + key);
+    }
+
+    @Override
+    public Set<String> getSet(String key, Set<String> defaultValue, String comment) {
+        key = "T_" + key;
+        Set<String> out = getList(key).parallelStream().map(String.class::cast).collect(Collectors.toSet());
+        if(out.isEmpty()) {
+            out = defaultValue;
+            setProperty(key, out.isEmpty() ? "" : out);
+        }
+        if(comment != null) {
+            layout.setComment(key, comment);
+            layout.setBlancLinesBefore(key, 1);
+        }
+        return out;
+    }
+
+    @Override
+    public void setSet(String key, Set<String> value, String comment) {
+        set("T_" + key, value.isEmpty() ? "" : value, comment);
+    }
+
+    @Override
+    public void deleteSet(String key) {
+        clearProperty("T_" + key);
     }
 
     @Override

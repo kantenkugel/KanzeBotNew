@@ -19,6 +19,7 @@ package com.kantenkugel.kanzebot.api.config;
 import org.apache.commons.configuration.ConfigurationException;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Given to every Addon to store its own configuration
@@ -33,7 +34,7 @@ public interface AddonConfig {
      * @param comment      the comment that should be set if the key didnt exist yet, or null
      * @return the enum value as read from the configuration
      */
-    public <T extends Enum<T>> T getEnum(String key, T defaultValue, String comment);
+    <T extends Enum<T>> T getEnum(String key, T defaultValue, String comment);
 
     /**
      * Sets an enum value in the configuration
@@ -43,14 +44,14 @@ public interface AddonConfig {
      * @param value   the value that should be used
      * @param comment the comment that should be set, or null
      */
-    public <T extends Enum<T>> void setEnum(String key, T value, String comment);
+    <T extends Enum<T>> void setEnum(String key, T value, String comment);
 
     /**
      * Deletes a enum-value from the configuration (if it existed)
      *
      * @param key the key of the enum-value
      */
-    public void deleteEnum(String key);
+    void deleteEnum(String key);
 
     /**
      * Retrieves a boolean value from the configuration
@@ -60,7 +61,7 @@ public interface AddonConfig {
      * @param comment      the comment that should be set if the key didnt exist yet, or null
      * @return the boolean value as read from the configuration
      */
-    public boolean getBoolean(String key, boolean defaultValue, String comment);
+    boolean getBoolean(String key, boolean defaultValue, String comment);
 
     /**
      * Sets an boolean value in the configuration
@@ -69,14 +70,14 @@ public interface AddonConfig {
      * @param value   the value that should be used
      * @param comment the comment that should be set, or null
      */
-    public void setBoolean(String key, boolean value, String comment);
+    void setBoolean(String key, boolean value, String comment);
 
     /**
      * Deletes a boolean value from the configuration (if it existed)
      *
      * @param key the key of the boolean value
      */
-    public void deleteBoolean(String key);
+    void deleteBoolean(String key);
 
     /**
      * Retrieves an integer value from the configuration
@@ -86,7 +87,7 @@ public interface AddonConfig {
      * @param comment      the comment that should be set if the key didnt exist yet, or null
      * @return the integer value as read from the configuration
      */
-    public int getInteger(String key, int defaultValue, String comment);
+    int getInteger(String key, int defaultValue, String comment);
 
     /**
      * Sets an integer value in the configuration
@@ -95,14 +96,14 @@ public interface AddonConfig {
      * @param value   the value that should be used
      * @param comment the comment that should be set, or null
      */
-    public void setInteger(String key, int value, String comment);
+    void setInteger(String key, int value, String comment);
 
     /**
      * Deletes a integer value from the configuration (if it existed)
      *
      * @param key the key of the integer value
      */
-    public void deleteInteger(String key);
+    void deleteInteger(String key);
 
     /**
      * Retrieves a float value from the configuration
@@ -112,7 +113,7 @@ public interface AddonConfig {
      * @param comment      the comment that should be set if the key didnt exist yet, or null
      * @return the float value as read from the configuration
      */
-    public float getFloat(String key, float defaultValue, String comment);
+    float getFloat(String key, float defaultValue, String comment);
 
     /**
      * Sets a float value in the configuration
@@ -121,14 +122,14 @@ public interface AddonConfig {
      * @param value   the value that should be used
      * @param comment the comment that should be set, or null
      */
-    public void setFloat(String key, float value, String comment);
+    void setFloat(String key, float value, String comment);
 
     /**
      * Deletes a float value from the configuration (if it existed)
      *
      * @param key the key of the float value
      */
-    public void deleteFloat(String key);
+    void deleteFloat(String key);
 
     /**
      * Retrieves a String value from the configuration
@@ -138,7 +139,7 @@ public interface AddonConfig {
      * @param comment      the comment that should be set if the key didnt exist yet, or null
      * @return the String value as read from the configuration
      */
-    public String getString(String key, String defaultValue, String comment);
+    String getString(String key, String defaultValue, String comment);
 
     /**
      * Sets a String value in the configuration
@@ -147,14 +148,14 @@ public interface AddonConfig {
      * @param value   the value that should be used
      * @param comment the comment that should be set, or null
      */
-    public void setString(String key, String value, String comment);
+    void setString(String key, String value, String comment);
 
     /**
      * Deletes a String value from the configuration (if it existed)
      *
      * @param key the key of the String value
      */
-    public void deleteString(String key);
+    void deleteString(String key);
 
     /**
      * Retrieves a List of strings from the configuration
@@ -164,7 +165,7 @@ public interface AddonConfig {
      * @param comment      the comment that should be set if the key didnt exist yet, or null
      * @return the String-list as read from the configuration
      */
-    public List<String> getList(String key, List<String> defaultValue, String comment);
+    List<String> getList(String key, List<String> defaultValue, String comment);
 
     /**
      * Sets a String-list value in the configuration
@@ -173,28 +174,54 @@ public interface AddonConfig {
      * @param value   the list that should be used
      * @param comment the comment that should be set, or null
      */
-    public void setList(String key, List<String> value, String comment);
+    void setList(String key, List<String> value, String comment);
 
     /**
      * Deletes a String-list from the configuration (if it existed)
      *
      * @param key the key of the String-list
      */
-    public void deleteList(String key);
+    void deleteList(String key);
+
+    /**
+     * Retrieves a Set of strings from the configuration
+     *
+     * @param key          the key of the String-set
+     * @param defaultValue the default value that should be used if the key didnt exist in the configuration
+     * @param comment      the comment that should be set if the key didnt exist yet, or null
+     * @return the String-set as read from the configuration
+     */
+    Set<String> getSet(String key, Set<String> defaultValue, String comment);
+
+    /**
+     * Sets a String-set value in the configuration
+     *
+     * @param key     the key of the String-set
+     * @param value   the set that should be used
+     * @param comment the comment that should be set, or null
+     */
+    void setSet(String key, Set<String> value, String comment);
+
+    /**
+     * Deletes a String-set from the configuration (if it existed)
+     *
+     * @param key the key of the String-set
+     */
+    void deleteSet(String key);
 
     /**
      * Returns whether this configuration has changed in memory, and is out of date with the file
      *
      * @return boolean true if the internal configuration object is not the same as the original file
      */
-    public boolean hasChanged();
+    boolean hasChanged();
 
     /**
      * Returns whether this configuration object was created for the first time (there will be no entries)
      *
      * @return boolean true if this configuration was newly created
      */
-    public boolean isNew();
+    boolean isNew();
 
     /**
      * Returns whether the read configuration has an older version than this one
@@ -202,7 +229,7 @@ public interface AddonConfig {
      *
      * @return boolean true if the version has changed
      */
-    public boolean hasVersionChanged();
+    boolean hasVersionChanged();
 
     /**
      * This method return the version of the old configuration file
@@ -210,13 +237,13 @@ public interface AddonConfig {
      *
      * @return int version-number
      */
-    public int getOldVersion();
+    int getOldVersion();
 
     /**
      * Tries to save the configuration to the disk
      *
      * @throws ConfigurationException if an error occures
      */
-    public void save() throws ConfigurationException;
+    void save() throws ConfigurationException;
 
 }

@@ -17,3 +17,6 @@
 # netbeans files
 /.nb-gradle/
 *.nb-gradle-properties
+
+# configs
+kanzebot.cfg
